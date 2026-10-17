@@ -90,7 +90,7 @@
        -> RPC book_session / cancel_booking / mark_booking_visited / cancel_session
 ```
 
-Express отдаёт клиенту только `SUPABASE_URL` и `SUPABASE_PUBLISHABLE_KEY`. Начальная учётная запись администратора задаётся в серверном `.env`. Если `SUPABASE_SERVICE_ROLE_KEY` доступен, сервер использует официальный Admin API. В учебной сборке без service role используется защищённый одноразовый bootstrap RPC: пароль администратора остаётся только на сервере, а в базе хранится только SHA-256 bootstrap-секрета.
+Express отдаёт клиенту только `SUPABASE_URL` и `SUPABASE_PUBLISHABLE_KEY`. Роли пользователей хранятся в таблице `profiles`, а демонстрационный администратор уже подготовлен в Supabase Auth для учебного проекта.
 
 ## Локальный запуск
 
@@ -114,25 +114,15 @@ npm.cmd start
 PORT=3000
 SUPABASE_URL=
 SUPABASE_PUBLISHABLE_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-ADMIN_EMAIL=
-ADMIN_PASSWORD=
-ADMIN_BOOTSTRAP_SECRET=
-DEMO_USER_EMAIL=
-DEMO_USER_PASSWORD=
-DEMO_SEED=false
 ```
 
-`.env` находится в `.gitignore`. В GitHub публикуется только `.env.example` без реальных значений.
-
-В готовой локальной сборке заполнены `ADMIN_EMAIL`, `ADMIN_PASSWORD` и `ADMIN_BOOTSTRAP_SECRET`, поэтому при первом запуске сервер автоматически создаёт начального администратора и назначает роль `admin`. `SUPABASE_SERVICE_ROLE_KEY` оставлен пустым и для этой учебной сборки не требуется. Если он будет указан позже, сервер переключится на официальный Supabase Admin API. Ни пароль администратора, ни bootstrap-секрет, ни service role key не передаются в `/api/config` или клиентский JavaScript.
+`.env` находится в `.gitignore`. Для Render публичные параметры Supabase заданы в `render.yaml`.
 
 ## SQL
 
 - `supabase/schema.sql` - таблицы, ограничения, RLS, триггеры и RPC;
 - `supabase/seed.sql` - 4 тренера и 17 занятий текущей/следующей недели;
 - `supabase/checks.sql` - WHERE, ORDER BY, JOIN, COUNT, GROUP BY и аналитический запрос;
-- `supabase/bootstrap.sql` - защищённая серверная инициализация первой учётной записи администратора;
 - `supabase/promote_admin.sql` - запасной учебный способ назначения роли уже зарегистрированному аккаунту.
 
 ## Безопасность
@@ -150,19 +140,13 @@ DEMO_SEED=false
 
 https://www.figma.com/design/cvGcaHvX2twEOQAHfGQVdS
 
+## Демонстрационные данные
 
-## Демонстрационные учётные записи
-
-В текущем Supabase-проекте `fitbook-final` уже подготовлены подтверждённые демонстрационные учётные записи:
-
-- администратор: `admin.fitbook@example.com` / `<задаётся через переменные окружения>`;
-- демо-пользователь: `demo.fitbook@example.com` / `<задаётся через переменные окружения>`.
-
-Для демо-пользователя в базе уже создано 6 записей с разными статусами, поэтому обе диаграммы административной панели сразу показывают данные. Серверный bootstrap остаётся идемпотентным: при запуске он проверяет существование администратора и не создаёт дубль. Реальные пароли и bootstrap-секрет находятся только в локальном `.env`/переменных окружения хостинга и не должны публиковаться в GitHub.
+В Supabase-проекте `fitbook-final` уже подготовлены роли пользователя и администратора, а также 6 записей с разными статусами. Благодаря этому административные графики сразу показывают реальные данные.
 
 ## Развёртывание
 
-Для публикации выбран **Render**, потому что он поддерживает Node.js/Express и позволяет хранить секретные переменные окружения вне GitHub. Репозиторий содержит `render.yaml` с build/start-командами и публичной конфигурацией Supabase. Пароли и bootstrap-секрет задаются в Render как Secret Environment Variables.
+Для публикации выбран **Render**, потому что он поддерживает Node.js/Express. Репозиторий содержит `render.yaml` с build/start-командами и публичной конфигурацией Supabase. Для развёртывания достаточно URL проекта и publishable key Supabase.
 
 Build command:
 
@@ -175,5 +159,3 @@ Start command:
 ```text
 npm start
 ```
-
-После развёртывания публичный URL добавляется в этот раздел и проверяется по `docs/DEMO-CHECKLIST.md`.
