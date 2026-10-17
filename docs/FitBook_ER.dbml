@@ -1,0 +1,63 @@
+Project FitBook {
+  database_type: 'PostgreSQL'
+  Note: 'ER-диаграмма FitBook. Только реально используемые таблицы.'
+}
+
+Table auth.users {
+  id uuid [pk]
+  email text
+}
+
+Table public.profiles {
+  id uuid [pk, ref: > auth.users.id]
+  email text [unique]
+  full_name text [not null]
+  role text [not null, default: 'user', note: 'user | admin']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table public.trainers {
+  id uuid [pk]
+  full_name text [not null]
+  specialization text
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+}
+
+Table public.sessions {
+  id uuid [pk]
+  trainer_id uuid [not null, ref: > public.trainers.id]
+  title text [not null]
+  direction text [not null]
+  session_date date [not null]
+  start_time time [not null]
+  duration_minutes integer [not null, default: 60]
+  room text [not null]
+  capacity integer [not null, default: 12]
+  booked_count integer [not null, default: 0]
+  level text [not null, default: 'Любой уровень']
+  status text [not null, default: 'active', note: 'active | cancelled']
+  created_at timestamptz [not null]
+}
+
+Table public.bookings {
+  id uuid [pk]
+  number bigint [increment]
+  user_id uuid [not null, ref: > public.profiles.id]
+  session_id uuid [not null, ref: > public.sessions.id]
+  comment text
+  status text [not null, default: 'confirmed', note: 'confirmed | visited | cancelled']
+  created_at timestamptz [not null]
+
+  Note: 'Для активных записей в PostgreSQL используется частичный UNIQUE INDEX: (user_id, session_id) WHERE status = confirmed'
+}
+
+Table public.booking_status_history {
+  id uuid [pk]
+  booking_id uuid [not null, ref: > public.bookings.id]
+  old_status text
+  new_status text [not null]
+  changed_by uuid [ref: > public.profiles.id]
+  changed_at timestamptz [not null]
+}
