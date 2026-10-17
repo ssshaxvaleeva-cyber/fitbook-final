@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: fitbook-final
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/config
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: SUPABASE_URL
+        value: https://xirpufsbtngbgkhuzprv.supabase.co
+      - key: SUPABASE_PUBLISHABLE_KEY
+        value: sb_publishable_Eb-xzerp2TvG2KWgeHivkw_Widg6-hh
