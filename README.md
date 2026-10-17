@@ -63,6 +63,8 @@
 - `sessions 1 -> N bookings`;
 - `bookings 1 -> N booking_status_history`.
 
+Подробное описание структуры и проверок находится в `docs/DATABASE.md`, а ER-исходник в `docs/FitBook_ER.dbml`.
+
 ## Матрица доступа
 
 | Операция | Пользователь | Администратор |
@@ -97,7 +99,7 @@ Express отдаёт клиенту только `SUPABASE_URL` и `SUPABASE_PUB
 1. Установить Node.js 20+.
 2. Выполнить `npm install`.
 3. Создать `.env` по примеру `.env.example`.
-4. Для текущей локальной сборки `.env` уже содержит URL и publishable key проекта `fitbook-final`.
+4. Указать URL и publishable key проекта `fitbook-final`.
 5. Выполнить `npm start`.
 6. Открыть `http://localhost:3000`.
 
@@ -117,13 +119,6 @@ SUPABASE_PUBLISHABLE_KEY=
 ```
 
 `.env` находится в `.gitignore`. Для Render публичные параметры Supabase заданы в `render.yaml`.
-
-## SQL
-
-- `supabase/schema.sql` - таблицы, ограничения, RLS, триггеры и RPC;
-- `supabase/seed.sql` - 4 тренера и 17 занятий текущей/следующей недели;
-- `supabase/checks.sql` - WHERE, ORDER BY, JOIN, COUNT, GROUP BY и аналитический запрос;
-- `supabase/promote_admin.sql` - запасной учебный способ назначения роли уже зарегистрированному аккаунту.
 
 ## Безопасность
 
